@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: tiu-php-app
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db1
+
+  db1:
+    image: mysql:8.0
+    container_name: tiu-mysql-db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tiu
+      MYSQL_USER: chanchal
+      MYSQL_PASSWORD: 1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: tiu-phpmyadmin-ui
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      PMA_HOST: db1
+      PMA_USER: chanchal
+      PMA_PASSWORD: 1234
+    depends_on:
+      - db1
+volumes:
+  mysql_data:
