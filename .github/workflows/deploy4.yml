@@ -13,16 +13,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Deploy files to EC2
+      - name: Deploy to EC2
         uses: easingthemes/ssh-deploy@main
         with:
-          remoteHost: ${{ secrets.HOST_DNS }}
-          remoteUser: ${{ secrets.USERNAME }}
-          target: ${{ secrets.TARGET_DIR }}
+          REMOTE_HOST: ${{ secrets.HOST_DNS }}
+          REMOTE_USER: ${{ secrets.USERNAME }}
+          TARGET: ${{ secrets.TARGET_DIR }}
+          REMOTE_PORT: 22
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
 
-      - name: Restart Apache (if needed)
+      - name: Restart Apache
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_DNS }}
