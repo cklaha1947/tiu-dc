@@ -1,8 +1,8 @@
-name: Deploy To EC2 via SSH ci/cd 3
+name: Deploy To EC2 via SSH CI/CD 3
 
 on:
   push:
-    branches: [ "main" ]   # or master
+    branches: [ "main" ]
 
 jobs:
   deploy:
@@ -18,8 +18,16 @@ jobs:
         host: ${{ secrets.EC2_HOST }}
         username: ${{ secrets.EC2_USER }}
         key: ${{ secrets.EC2_SSH_KEY }}
-        source: "."
+        source: "./"
         target: "${{ secrets.EC2_PROJECT_PATH }}"
+        overwrite: true
+        strip_components: 1
+        exclude: |
+          .git/
+          .github/
+          node_modules/
+          vendor/
+          docker-data/
 
     - name: Run SSH Commands
       uses: appleboy/ssh-action@v0.1.7
