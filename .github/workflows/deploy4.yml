@@ -10,19 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣ Checkout repository
       - name: Checkout code
         uses: actions/checkout@v2
 
+      # 2️⃣ Deploy files to EC2
       - name: Deploy to EC2
         uses: easingthemes/ssh-deploy@main
         with:
           REMOTE_HOST: ${{ secrets.HOST_DNS }}
           REMOTE_USER: ${{ secrets.USERNAME }}
-          TARGET: ${{ secrets.TARGET_DIR }}
+          TARGET: ${{ secrets.TARGET_DIR }}       # e.g., /var/www/html/myproject
+          SOURCE: "."                             # deploy everything from repo root
           REMOTE_PORT: 22
+          ARGS: "-avz --delete"                   # rsync args
+          EXCLUDE: |
+            .git
+            node_modules
+            vendor
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
 
+      # 3️⃣ Restart Apache to serve new files
       - name: Restart Apache
         uses: appleboy/ssh-action@master
         with:
